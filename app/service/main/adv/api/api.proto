@@ -1,0 +1,72 @@
+syntax = "proto3";
+package adv.service;
+
+option go_package = "api";
+
+service AdvService {
+  rpc Add(Adv) returns (AddReply);
+  rpc Edit(Adv) returns (EditReply);
+  rpc Delete(AidReq) returns (DeleteReply);
+  rpc QueryAll(QueryReq) returns (AdvsReply);
+  rpc QueryOne(QueryReq) returns (AdvReply);
+}
+
+message Adv {
+  sint64 id = 1;
+  sint64 uniacid = 2;
+  string advname = 3;
+  string link = 4;
+  string thumb = 5;
+  sint64 displayorder = 6;
+  sint64 enabled = 7;
+  sint64 shopid = 8;
+  sint64 iswxapp = 9;
+}
+
+message AddReply {
+  sint64 code = 1;
+  string msg = 2;
+  sint64 status = 3;
+  sint64 id = 4;
+}
+
+message EditReply {
+  sint64 code = 1;
+  string msg = 2;
+  sint64 status = 3;
+}
+
+message AidReq {
+  sint64 id = 1;
+  sint64 uniacid = 2;
+}
+
+message DeleteReply {
+  sint64 code = 1;
+  string msg = 2;
+  sint64 status = 3;
+}
+
+message QueryReq {
+  sint64 id = 1;
+  sint64 uniacid = 2;
+  string keyword = 3;
+  sint64 displayorder = 6;
+  sint64 enabled = 7;
+  sint64 shopid = 8;
+  sint64 iswxapp = 9;
+}
+
+message AdvsReply {
+  sint64 code = 1;
+  string msg = 2;
+  repeated Adv list = 3;
+  sint64 total = 4;
+  sint64 size = 5;
+}
+
+message AdvReply {
+  sint64 code = 1;
+  string msg = 2;
+  Adv adv = 3;
+}
