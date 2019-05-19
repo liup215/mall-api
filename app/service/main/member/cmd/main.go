@@ -2,7 +2,7 @@ package main
 
 import (
 	"mall/app/service/main/member/conf"
-	"mall/app/service/main/member/server"
+	"mall/app/service/main/member/server/http/server"
 )
 
 func main() {

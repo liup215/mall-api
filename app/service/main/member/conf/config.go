@@ -41,7 +41,7 @@ func local() error {
 			Password:     "123456",
 			Charset:      "utf8",
 			Database:     "emao_shop",
-			SQLLog:       false,
+			SQLLog:       true,
 			MaxIdleConns: 2,
 			MaxOpenConns: 4,
 			Prefix:       "ims_",

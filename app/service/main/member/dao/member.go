@@ -1,11 +1,26 @@
 package dao
 
 import (
+	"github.com/jinzhu/gorm"
 	"mall/app/service/main/member/model"
+	"mall/lib/time"
 )
 
+func (d *Dao) CreateMember(member model.EweiShopMember) error {
+	member.Createtime = time.Now()
+	return d.orm.Create(&member).Error
+}
+
 func (d *Dao) QueryMember(query model.MemberQuery) (model.EweiShopMember, error) {
-	var m, u model.EweiShopMember
+
+	var u model.EweiShopMember
+	err := d.parseQuery(query).First(&u).Error
+	return u, err
+}
+
+func (d *Dao) parseQuery(query model.MemberQuery) *gorm.DB {
+
+	var m model.EweiShopMember
 	if query.Id != 0 {
 		m.Id = query.Id
 	}
@@ -22,6 +37,5 @@ func (d *Dao) QueryMember(query model.MemberQuery) (model.EweiShopMember, error)
 		m.Mobile = query.Mobile
 	}
 
-	err := d.db.Where(&m).First(&u).Error
-	return u, err
+	return d.orm.Where(&m)
 }

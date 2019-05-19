@@ -1,0 +1,58 @@
+package server
+
+import (
+	"github.com/gin-gonic/gin"
+	"mall/app/service/main/finance/model"
+	"net/http"
+)
+
+func logByOpenid(c *gin.Context) {
+	var q model.LogQuery
+
+	if err := c.ShouldBindUri(&q); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"code":    400,
+			"message": "参数错误," + err.Error(),
+		})
+		return
+	}
+
+	var p model.Page
+	if err := c.Bind(&p); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"code":    400,
+			"message": "参数错误," + err.Error(),
+		})
+		return
+	}
+
+	list, total, err := svr.QueryLogs(q, p)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"code":    400,
+			"message": "获取失败," + err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"code":    200,
+		"message": "获取成功",
+		"data": gin.H{
+			"total": total,
+			"list":  list,
+			"size":  len(list),
+		},
+	})
+}
+
+func logCreate(c *gin.Context) {
+	var log model.EweiShopMemberLog
+	if err := c.Bind(&log); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"code":    400,
+			"message": "参数错误," + err.Error(),
+		})
+		return
+	}
+}

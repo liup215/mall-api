@@ -4,6 +4,10 @@ import (
 	"mall/app/service/main/member/model"
 )
 
+func (s *Service) QueryMember(q model.MemberQuery) (model.EweiShopMember, error) {
+	return s.d.QueryMember(q)
+}
+
 func (s *Service) MemberInfoById(id, uniacid int) (model.EweiShopMember, error) {
 	q := model.MemberQuery{
 		Id: id,

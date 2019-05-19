@@ -7,12 +7,12 @@ import (
 )
 
 type Dao struct {
-	db *gorm.DB
+	orm *gorm.DB
 }
 
 func New(c *conf.Config) *Dao {
 	db := orm.New(c.Orm)
 	return &Dao{
-		db: db,
+		orm: db,
 	}
 }
