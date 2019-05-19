@@ -1,3 +1,5 @@
 mall
 main
+build.sh
+upload.sh
 app/service/main/*/cmd/cmd
