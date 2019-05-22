@@ -8,12 +8,18 @@ import (
 var Conf *Config
 
 type Config struct {
-	Orm  *orm.Config
-	Http *HttpConfig
+	Orm     *orm.Config
+	Http    *HttpConfig
+	Service *ServiceConfig
 }
 
 type HttpConfig struct {
 	Port string
+}
+
+type ServiceConfig struct {
+	Member  string
+	Finance string
 }
 
 func Init() error {
@@ -49,6 +55,9 @@ func local() error {
 		Http: &HttpConfig{
 			Port: "8090",
 		},
+		Service: &ServiceConfig{
+			Finance: "http://localhost:8091",
+		},
 	}
 	return nil
 }
@@ -60,7 +69,7 @@ func development() error {
 			Port:         "3306",
 			Username:     "root",
 			Password:     "123456",
-			Charset:      "utf-8",
+			Charset:      "utf8",
 			Database:     "bianyiquan",
 			SQLLog:       true,
 			MaxIdleConns: 2,
@@ -69,6 +78,9 @@ func development() error {
 		},
 		Http: &HttpConfig{
 			Port: "80",
+		},
+		Service: &ServiceConfig{
+			Finance: "http://byq-shop-finance.emao.xin",
 		},
 	}
 	return nil
@@ -82,7 +94,7 @@ func production() error {
 			Port:         "3306",
 			Username:     "root",
 			Password:     "123456",
-			Charset:      "utf-8",
+			Charset:      "utf8",
 			Database:     "bianyiquan",
 			SQLLog:       true,
 			MaxIdleConns: 2,
@@ -91,6 +103,9 @@ func production() error {
 		},
 		Http: &HttpConfig{
 			Port: "80",
+		},
+		Service: &ServiceConfig{
+			Finance: "http://byq-shop-finance.emao.xin",
 		},
 	}
 	return nil

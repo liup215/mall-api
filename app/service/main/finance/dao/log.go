@@ -7,7 +7,7 @@ import (
 	"mall/lib/time"
 )
 
-func (d *Dao) CreateLog(log model.EweiShopMemberLog) (int, error) {
+func (d *Dao) CreateLog(log model.EweiShopMemberLog) (model.EweiShopMemberLog, error) {
 
 	logno := ""
 	for {
@@ -23,11 +23,25 @@ func (d *Dao) CreateLog(log model.EweiShopMemberLog) (int, error) {
 	log.Createtime = time.Now()
 
 	err := d.orm.Create(&log).Error
-	return log.Id, err
+	return log, err
 
 }
 
-func (d *Dao) QueryLog(q model.LogQuery, page model.Page) ([]model.EweiShopMemberLog, int, error) {
+func (d *Dao) LogByLogno(logno string, uniacid int) (model.EweiShopMemberLog, error) {
+	var log model.EweiShopMemberLog
+
+	err := d.orm.Where(map[string]interface{}{"logno": logno, "uniacid": uniacid}).First(&log).Error
+	return log, err
+}
+
+func (d *Dao) LogById(id, uniacid int) (model.EweiShopMemberLog, error) {
+	var log model.EweiShopMemberLog
+
+	err := d.orm.Where(map[string]interface{}{"id": id, "uniacid": uniacid}).First(&log).Error
+	return log, err
+}
+
+func (d *Dao) LogList(q model.LogQuery, page model.Page) ([]model.EweiShopMemberLog, int, error) {
 	var list []model.EweiShopMemberLog
 	var total int
 	db := d.parseLogQuery(q)
@@ -49,6 +63,14 @@ func (d *Dao) QueryLog(q model.LogQuery, page model.Page) ([]model.EweiShopMembe
 	return list, total, err
 }
 
+func (d *Dao) QueryLog(q model.LogQuery) (model.EweiShopMemberLog, error) {
+	var log model.EweiShopMemberLog
+	db := d.parseLogQuery(q)
+	err := db.First(&log).Error
+
+	return log, err
+}
+
 func (d *Dao) parseLogQuery(q model.LogQuery) *gorm.DB {
 
 	var l model.EweiShopMemberLog
@@ -64,6 +86,10 @@ func (d *Dao) parseLogQuery(q model.LogQuery) *gorm.DB {
 		l.Openid = q.Openid
 	}
 
+	if q.Logno != "" {
+		l.Logno = q.Logno
+	}
+
 	db := d.orm.Model(&model.EweiShopMemberLog{}).Where(&l)
 
 	switch q.TypeStr {
@@ -73,6 +99,8 @@ func (d *Dao) parseLogQuery(q model.LogQuery) *gorm.DB {
 		q.Type = 1
 	case "credit2":
 		q.Type = 0
+	default:
+		q.Type = -1
 	}
 
 	if q.Type != -1 {
@@ -80,4 +108,8 @@ func (d *Dao) parseLogQuery(q model.LogQuery) *gorm.DB {
 	}
 	return db
 
+}
+
+func (d *Dao) UpdateLogStatus(logno string, status, uniacid int) error {
+	return d.orm.Model(&model.EweiShopMemberLog{}).Where(map[string]interface{}{"logno": logno, "uniacid": uniacid}).Update("status", status).Error
 }

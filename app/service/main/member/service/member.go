@@ -1,6 +1,7 @@
 package service
 
 import (
+	"errors"
 	"mall/app/service/main/member/model"
 )
 
@@ -32,4 +33,15 @@ func (s *Service) MemberInfoByMobile(mobile string, uniacid int) (model.EweiShop
 	}
 
 	return s.d.QueryMember(q)
+}
+
+func (s *Service) MemberUpdateMobile(id int, mobile string) error {
+	if id == 0 {
+		return errors.New("请输入用户id")
+	}
+
+	if mobile == "" {
+		return errors.New("请输入正确的手机号")
+	}
+	return s.d.UpdateMobile(id, mobile)
 }

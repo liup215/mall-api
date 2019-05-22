@@ -32,11 +32,15 @@ func router(r *gin.Engine) {
 		ValidateHeaders: false,
 	}))
 
-	r.GET("/log/:type/:uniacid/openid/:openid", logByOpenid)
+	logGroup := r.Group("/log")
+	{
+		logGroup.GET("/list", logList)
+		logGroup.GET("/detail", logDetail)
+	}
 
 	rechargeGroup := r.Group("/recharge")
 	{
-		rechargeGroup.POST("/submit", rechargeSubmit)
-		rechargeGroup.POST("/complete", rechargeComplete)
+		rechargeGroup.POST("/prerecharge", preRecharge)
+		rechargeGroup.POST("/logConfirm", rechargeLogConfirm)
 	}
 }

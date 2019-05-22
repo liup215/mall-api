@@ -39,3 +39,7 @@ func (d *Dao) parseQuery(query model.MemberQuery) *gorm.DB {
 
 	return d.orm.Where(&m)
 }
+
+func (d *Dao) UpdateMobile(id int, mobile string) error {
+	return d.orm.Where(map[string]interface{}{"id": id}).Update("mobile", mobile).Error
+}

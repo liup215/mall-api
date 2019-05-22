@@ -2,7 +2,7 @@ package server
 
 import (
 	"github.com/gin-gonic/gin"
-	"net/http"
+	"mall/lib/net/http"
 	"strconv"
 )
 
@@ -11,10 +11,7 @@ func memberInfoByMobile(c *gin.Context) {
 	uniacid := c.Param("uniacid")
 	uid, err := strconv.Atoi(uniacid)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"code":    400,
-			"message": "参数错误," + err.Error(),
-		})
+		http.Response(c, 400, "参数错误，"+err.Error(), nil)
 		return
 	}
 
@@ -22,17 +19,32 @@ func memberInfoByMobile(c *gin.Context) {
 
 	member, err := svr.MemberInfoByMobile(mobile, uid)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"code":    400,
-			"message": "用户获取失败," + err.Error(),
-		})
+		http.Response(c, 400, "用户获取失败,"+err.Error(), nil)
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"code":    200,
-		"message": "用户获取成功",
-		"data":    member,
-	})
+	http.Response(c, 200, "用户获取成功", member)
+
+}
+
+func memberUpdateMobile(c *gin.Context) {
+	type Param struct {
+		Id     int    `json:"id" form:"id" binding:"required"`
+		Mobile string `json:"mobile" form:"id" binding:"required"`
+	}
+
+	var p Param
+
+	if err := c.Bind(&p); err != nil {
+		http.Response(c, 400, "参数错误，"+err.Error(), nil)
+		return
+	}
+
+	if err := svr.MemberUpdateMobile(p.Id, p.Mobile); err != nil {
+		http.Response(c, 400, "更新错误，"+err.Error(), nil)
+		return
+	}
+
+	http.Response(c, 200, "更新成功", nil)
 
 }

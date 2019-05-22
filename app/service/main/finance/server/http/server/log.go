@@ -6,10 +6,36 @@ import (
 	"net/http"
 )
 
-func logByOpenid(c *gin.Context) {
+func logDetail(c *gin.Context) {
+	var q model.LogQuery
+	if err := c.Bind(&q); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"code":    400,
+			"message": "参数错误," + err.Error(),
+		})
+		return
+	}
+
+	log, err := svr.LogDetail(q)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"code":    400,
+			"message": "获取失败," + err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"code":    200,
+		"message": "获取成功",
+		"data":    log,
+	})
+}
+
+func logList(c *gin.Context) {
 	var q model.LogQuery
 
-	if err := c.ShouldBindUri(&q); err != nil {
+	if err := c.Bind(&q); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"code":    400,
 			"message": "参数错误," + err.Error(),
@@ -26,7 +52,7 @@ func logByOpenid(c *gin.Context) {
 		return
 	}
 
-	list, total, err := svr.QueryLogs(q, p)
+	list, total, err := svr.LogList(q, p)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"code":    400,

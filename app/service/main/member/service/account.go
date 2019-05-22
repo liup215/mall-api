@@ -26,11 +26,12 @@ func (s *Service) Register(param model.RegisterParam) error {
 		return errors.New("请输入密码！")
 	}
 
-	if _, err := s.d.QueryMember(model.MemberQuery{Mobile: param.Mobile}); err != gorm.ErrRecordNotFound {
+	if _, err := s.d.QueryMember(model.MemberQuery{Uniacid: param.Uniacid, Mobile: param.Mobile}); err != gorm.ErrRecordNotFound {
 		return errors.New("此手机号已经注册，请直接登录")
 	}
 
 	member.Mobile = param.Mobile
+	member.Uniacid = param.Uniacid
 
 	for {
 		member.Openid = fmt.Sprintf("wap_user_%v_%s_%s", param.Uniacid, member.Mobile, strings.Random(4))
