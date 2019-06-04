@@ -34,31 +34,3 @@ func (s *Service) PreRecharge(param model.PreRechargeParam) (*model.PreRechargeR
 		Logno:   record.Logno,
 	}, err
 }
-
-func (s *Service) RechargeLogConfirm(param model.RechargeLogConfirmParam) (*model.RechargeLogConfirmResponse, error) {
-	if param.Uniacid == 0 {
-		return nil, errors.New("无效的商城id")
-	}
-
-	if param.Logno == "" {
-		return nil, errors.New("无效的logno")
-	}
-
-	log, _ := s.d.LogByLogno(param.Logno, param.Uniacid)
-	if log.Status == 1 {
-		return nil, errors.New("订单已确认，不能多次确认")
-	}
-
-	err := s.d.UpdateLogStatus(param.Logno, 1, param.Uniacid)
-	if err != nil {
-		return nil, err
-	}
-	return &model.RechargeLogConfirmResponse{
-		Uniacid: log.Uniacid,
-		Openid:  log.Openid,
-		Money:   log.Money,
-		Type:    log.Type,
-		Logno:   log.Logno,
-	}, nil
-
-}

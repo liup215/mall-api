@@ -1,15 +1,59 @@
 package service
 
 import (
+	"context"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/jinzhu/gorm"
+	"mall/app/service/main/member/api"
 	"mall/app/service/main/member/model"
 	"mall/lib/strings"
 	"mall/lib/utils"
 )
+
+func (s *Service) MemberCreate(c context.Context, r *api.MemberCreateRequest) (*api.MemberCreateReply, error) {
+	member := model.EweiShopMember{}
+
+	if r.Uniacid == 0 {
+		return nil, errors.New("无效的应用id")
+	}
+
+	if r.Mobile == "" {
+		return nil, errors.New("请输入正确的手机号码！")
+	}
+
+	if r.Pwd == "" {
+		return nil, errors.New("请输入密码！")
+	}
+
+	if _, err := s.d.QueryMember(model.MemberQuery{Uniacid: int(r.Uniacid), Mobile: r.Mobile}); err != gorm.ErrRecordNotFound {
+		return nil, errors.New("此手机号已经注册，请直接登录")
+	}
+
+	member.Mobile = r.Mobile
+	member.Uniacid = int(r.Uniacid)
+	member.Mobileverify = 1
+
+	for {
+		member.Openid = fmt.Sprintf("wap_user_%v_%s_%s", r.Uniacid, member.Mobile, strings.Random(4))
+		if _, err := s.d.QueryMember(model.MemberQuery{Uniacid: int(r.Uniacid), Openid: member.Openid}); err == gorm.ErrRecordNotFound {
+			break
+		}
+	}
+
+	member.Nickname = r.Mobile[0:3] + "xxxx" + r.Mobile[7:]
+	member.Salt = strings.Random(20)
+	member.Pwd = strings.Md5(r.Pwd + member.Salt)
+
+	m, err := s.d.CreateMember(member)
+	return &api.MemberCreateReply{
+		Uniacid: int64(m.Uniacid),
+		Id:      int64(m.Id),
+		Openid:  m.Openid,
+	}, err
+}
 
 func (s *Service) Register(param model.RegisterParam) error {
 	member := model.EweiShopMember{}
@@ -32,6 +76,7 @@ func (s *Service) Register(param model.RegisterParam) error {
 
 	member.Mobile = param.Mobile
 	member.Uniacid = param.Uniacid
+	member.Mobileverify = 1
 
 	for {
 		member.Openid = fmt.Sprintf("wap_user_%v_%s_%s", param.Uniacid, member.Mobile, strings.Random(4))
@@ -44,7 +89,8 @@ func (s *Service) Register(param model.RegisterParam) error {
 	member.Salt = strings.Random(20)
 	member.Pwd = strings.Md5(param.Pwd + member.Salt)
 
-	return s.d.CreateMember(member)
+	_, err := s.d.CreateMember(member)
+	return err
 
 }
 
@@ -76,4 +122,36 @@ func (s *Service) Login(param model.LoginParam) (string, error) {
 
 	return base64.StdEncoding.EncodeToString(data), nil
 
+}
+
+func (s *Service) MemberUpdatePwd(p *model.UpdatePwdParam) error {
+
+	if p.Uniacid == 0 {
+		return errors.New("无效的应用id")
+	}
+
+	if p.Openid == "" {
+		return errors.New("无效的Openid")
+	}
+
+	if p.Newpwd == "" {
+		return errors.New("请输入密码！")
+	}
+
+	member, err := s.d.QueryMember(model.MemberQuery{Uniacid: p.Uniacid, Openid: p.Openid})
+
+	if err != nil {
+		if err != gorm.ErrRecordNotFound {
+			return errors.New("查无此用户")
+		} else {
+			return errors.New("用户查询失败")
+		}
+	}
+
+	fmt.Println(p.Newpwd, member.Salt)
+
+	pwd := strings.Md5(p.Newpwd + member.Salt)
+	fmt.Println(pwd)
+	p.Newpwd = pwd
+	return s.d.UpdatePwd(p)
 }

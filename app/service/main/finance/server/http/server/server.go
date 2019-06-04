@@ -40,7 +40,6 @@ func router(r *gin.Engine) {
 
 	rechargeGroup := r.Group("/recharge")
 	{
-		rechargeGroup.POST("/prerecharge", preRecharge)
-		rechargeGroup.POST("/logConfirm", rechargeLogConfirm)
+		rechargeGroup.POST("/prerecharge", prerecharge)
 	}
 }

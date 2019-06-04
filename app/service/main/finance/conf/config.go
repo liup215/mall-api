@@ -8,8 +8,9 @@ import (
 var Conf *Config
 
 type Config struct {
-	Orm  *orm.Config
-	Http *HttpConfig
+	Orm          *orm.Config
+	Http         *HttpConfig
+	MemberClient string
 }
 
 type HttpConfig struct {
@@ -48,6 +49,7 @@ func local() error {
 		Http: &HttpConfig{
 			Port: "8091",
 		},
+		MemberClient: "",
 	}
 	return nil
 }
@@ -60,7 +62,7 @@ func development() error {
 			Username:     "root",
 			Password:     "123456",
 			Charset:      "utf8",
-			Database:     "bianyiquan",
+			Database:     "bianyiquan_dev",
 			SQLLog:       true,
 			MaxIdleConns: 2,
 			MaxOpenConns: 4,
@@ -69,6 +71,7 @@ func development() error {
 		Http: &HttpConfig{
 			Port: "80",
 		},
+		MemberClient: "http://byq-shop-member-dev.emao.xin",
 	}
 	return nil
 }
@@ -82,7 +85,7 @@ func production() error {
 			Username:     "root",
 			Password:     "123456",
 			Charset:      "utf8",
-			Database:     "bianyiquan",
+			Database:     "bianyiquan_dev",
 			SQLLog:       true,
 			MaxIdleConns: 2,
 			MaxOpenConns: 4,
@@ -91,6 +94,7 @@ func production() error {
 		Http: &HttpConfig{
 			Port: "80",
 		},
+		MemberClient: "http://byq-shop-member.emao.xin",
 	}
 	return nil
 }

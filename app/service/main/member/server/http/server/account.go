@@ -42,3 +42,20 @@ func login(c *gin.Context) {
 	})
 	return
 }
+
+func memberUpdatePwd(c *gin.Context) {
+	var p model.UpdatePwdParam
+	if err := c.Bind(&p); err != nil {
+		http.Response(c, 400, "更新失败,"+err.Error(), nil)
+		return
+	}
+
+	err := svr.MemberUpdatePwd(&p)
+	if err != nil {
+		http.Response(c, 400, "更新失败,"+err.Error(), nil)
+		return
+	}
+
+	http.Response(c, 200, "更新成功", nil)
+
+}

@@ -6,9 +6,10 @@ import (
 	"mall/lib/time"
 )
 
-func (d *Dao) CreateMember(member model.EweiShopMember) error {
+func (d *Dao) CreateMember(member model.EweiShopMember) (*model.EweiShopMember, error) {
 	member.Createtime = time.Now()
-	return d.orm.Create(&member).Error
+	err := d.orm.Create(&member).Error
+	return &member, err
 }
 
 func (d *Dao) QueryMember(query model.MemberQuery) (model.EweiShopMember, error) {
@@ -35,11 +36,12 @@ func (d *Dao) parseQuery(query model.MemberQuery) *gorm.DB {
 
 	if query.Mobile != "" {
 		m.Mobile = query.Mobile
+		m.Mobileverify = 1
 	}
 
 	return d.orm.Where(&m)
 }
 
 func (d *Dao) UpdateMobile(id int, mobile string) error {
-	return d.orm.Where(map[string]interface{}{"id": id}).Update("mobile", mobile).Error
+	return d.orm.Model(&model.EweiShopMember{}).Where(map[string]interface{}{"id": id}).Update("mobile", mobile).Error
 }

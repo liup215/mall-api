@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"strings"
 )
 
 type Client struct {
@@ -27,7 +28,7 @@ func (client *Client) RestfulGET(uri string, params url.Values) error {
 
 }
 
-func (client *Client) RestfulPOST(uri string, params map[string]interface{}) ([]byte, error) {
+func (client *Client) RestfulPOST(uri string, params url.Values) ([]byte, error) {
 	req, err := client.request(http.MethodPost, uri, params)
 	if err != nil {
 		return nil, err
@@ -43,28 +44,38 @@ func (client *Client) RestfulPOST(uri string, params map[string]interface{}) ([]
 
 }
 
-func (client *Client) request(method, uri string, params map[string]interface{}) (*http.Request, error) {
+func (client *Client) JSON(uri string, params interface{}) ([]byte, error) {
+	data, err := json.Marshal(params)
+	if err != nil {
+		return nil, err
+	}
+
+	r := bytes.NewReader(data)
+	req, err := http.NewRequest(http.MethodPost, uri, r)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := client.c.Do(req)
+	if err != nil {
+		fmt.Println(err.Error())
+		return nil, err
+	}
+
+	return client.parseResponse(resp)
+
+}
+
+func (client *Client) request(method, uri string, params url.Values) (*http.Request, error) {
 	uri = client.host + uri
 
-	var r *bytes.Reader
+	var r *strings.Reader
 	switch method {
 	case http.MethodGet:
 
-		values := url.Values{}
-		for k, v := range params {
-			values.Set(k, v.(string))
-		}
-		uri = uri + "?" + values.Encode()
+		uri = uri + "?" + params.Encode()
 	default:
 		method = http.MethodPost
-		data, err := json.Marshal(&params)
-		if err != nil {
-			return nil, err
-		}
-
-		fmt.Println(string(data))
-
-		r = bytes.NewReader(data)
+		r = strings.NewReader(params.Encode())
 	}
 
 	req, err := http.NewRequest(method, uri, r)
@@ -74,7 +85,7 @@ func (client *Client) request(method, uri string, params map[string]interface{})
 	}
 	const (
 		_contentType = "Content-Type"
-		_urlencoded  = "application/json"
+		_urlencoded  = "application/x-www-form-urlencoded"
 	)
 
 	if method == http.MethodPost {

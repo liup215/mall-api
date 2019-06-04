@@ -40,11 +40,12 @@ func router(r *gin.Engine) {
 
 	creditGroup := r.Group("/credit")
 	{
-		creditGroup.POST("/recharge/confirm", rechargeConfirm)
+		creditGroup.POST("/update", creditUpdate)
 	}
 
 	updateGroup := r.Group("/update")
 	{
 		updateGroup.POST("/mobile", memberUpdateMobile)
+		updateGroup.POST("/pwd", memberUpdatePwd)
 	}
 }

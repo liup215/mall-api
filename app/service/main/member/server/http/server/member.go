@@ -1,15 +1,19 @@
 package server
 
 import (
+	"context"
 	"github.com/gin-gonic/gin"
+	"mall/app/service/main/member/api"
+	"mall/app/service/main/member/model"
 	"mall/lib/net/http"
+	"mall/lib/time"
 	"strconv"
 )
 
 func memberInfoByMobile(c *gin.Context) {
 
 	uniacid := c.Param("uniacid")
-	uid, err := strconv.Atoi(uniacid)
+	uid, err := strconv.ParseInt(uniacid, 10, 64)
 	if err != nil {
 		http.Response(c, 400, "参数错误，"+err.Error(), nil)
 		return
@@ -17,13 +21,32 @@ func memberInfoByMobile(c *gin.Context) {
 
 	mobile := c.Param("mobile")
 
-	member, err := svr.MemberInfoByMobile(mobile, uid)
+	m, err := svr.MemberInfoByMobile(context.Background(), &api.MemberInfoByMobileRequest{
+		Uniacid: uid,
+		Mobile:  mobile,
+	})
 	if err != nil {
 		http.Response(c, 400, "用户获取失败,"+err.Error(), nil)
 		return
 	}
 
-	http.Response(c, 200, "用户获取成功", member)
+	http.Response(c, 200, "用户获取成功", model.EweiShopMember{
+		Uniacid:    int(m.Uniacid),
+		Id:         int(m.Id),
+		Openid:     m.Openid,
+		Realname:   m.Realname,
+		Mobile:     m.Mobile,
+		Weixin:     m.Weixin,
+		Createtime: time.Time(m.Createtime),
+		Status:     int(m.Status),
+		Nickname:   m.Nickname,
+		Gender:     int(m.Gender),
+		Avatar:     m.Avatar,
+		Province:   m.Province,
+		City:       m.City,
+		Area:       m.Area,
+		Salt:       m.Salt,
+	})
 
 }
 

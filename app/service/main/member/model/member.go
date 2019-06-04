@@ -108,3 +108,11 @@ type EweiShopMember struct {
 	Idnumber            string    `json:"idnumber,omitempty"`
 	Wxcardupdatetime    time.Time `json:"wxcardupdatetime,omitempty"`
 }
+
+type MemberQuery struct {
+	Id           int    `json:"id" form:"id"`
+	Uniacid      int    `json:"uniacid" form:"uniacid"`
+	Openid       string `json:"openid" form:"openid"`
+	Mobile       string `json:"mobile" form:"mobile"`
+	Mobileverify int    `json:"mobileverify" form:"mobileverify"`
+}
