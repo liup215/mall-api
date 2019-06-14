@@ -71,3 +71,7 @@ func memberUpdateMobile(c *gin.Context) {
 	http.Response(c, 200, "更新成功", nil)
 
 }
+
+func checkMember(c *gin.Context) {
+
+}

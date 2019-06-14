@@ -2,7 +2,6 @@ package auth
 
 import (
 	"github.com/appleboy/gin-jwt"
-	"mall/lib/strings"
 	"time"
 )
 
@@ -11,8 +10,12 @@ func New(c *Config) *jwt.GinJWTMiddleware {
 		c = &Config{}
 	}
 
+	if c.Realm == "" {
+		c.Realm = "mall"
+	}
+
 	if c.Key == "" {
-		c.Key = strings.Random(12)
+		c.Key = "mallmallmall"
 	}
 	if c.TokenLookup == "" {
 		c.TokenLookup = "header: Authorization, query: token, cookie: jwt"
@@ -25,7 +28,6 @@ func New(c *Config) *jwt.GinJWTMiddleware {
 	authMiddleware := &jwt.GinJWTMiddleware{
 		Realm:      c.Realm,
 		Key:        []byte(c.Key),
-		Timeout:    time.Hour,
 		MaxRefresh: time.Hour,
 		// TokenLookup is a string in the form of "<source>:<name>" that is used
 		// to extract token from the request.

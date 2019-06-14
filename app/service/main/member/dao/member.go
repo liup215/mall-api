@@ -19,27 +19,33 @@ func (d *Dao) QueryMember(query model.MemberQuery) (model.EweiShopMember, error)
 	return u, err
 }
 
-func (d *Dao) parseQuery(query model.MemberQuery) *gorm.DB {
+func (d *Dao) QueryMemberOne(query model.MemberQuery) (*model.EweiShopMember, error) {
 
-	var m model.EweiShopMember
+	var u model.EweiShopMember
+	err := d.parseQuery(query).First(&u).Error
+	return &u, err
+}
+
+func (d *Dao) parseQuery(query model.MemberQuery) *gorm.DB {
+	db := d.orm.Model(&model.EweiShopMember{})
+
 	if query.Id != 0 {
-		m.Id = query.Id
+		db.Where("id = ?", query.Id)
 	}
 
 	if query.Uniacid != 0 {
-		m.Uniacid = query.Uniacid
+		db.Where("uniacid = ?", query.Uniacid)
 	}
 
 	if query.Openid != "" {
-		m.Openid = query.Openid
+		db.Where("openid = ?", query.Openid)
 	}
 
 	if query.Mobile != "" {
-		m.Mobile = query.Mobile
-		m.Mobileverify = 1
+		db.Where("mobile = ? AND mobileverify = ?", query.Mobile, 1)
 	}
 
-	return d.orm.Where(&m)
+	return db
 }
 
 func (d *Dao) UpdateMobile(id int, mobile string) error {

@@ -2,12 +2,14 @@ package conf
 
 import (
 	"mall/lib/database/orm"
+	"mall/lib/net/http/middleware/auth"
 	"os"
 )
 
 var Conf *Config
 
 type Config struct {
+	Auth    *auth.Config
 	Orm     *orm.Config
 	Http    *HttpConfig
 	Grpc    *GrpcConfig

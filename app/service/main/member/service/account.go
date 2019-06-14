@@ -91,7 +91,33 @@ func (s *Service) Register(param model.RegisterParam) error {
 
 	_, err := s.d.CreateMember(member)
 	return err
+}
 
+func (s *Service) UserCheckWechat(param model.UserCheckWechatParam) (*model.EweiShopMember, error) {
+	member := model.EweiShopMember{}
+	if m, err := s.d.QueryMember(model.MemberQuery{Uniacid: param.Uniacid, Openid: param.Openid}); err != gorm.ErrRecordNotFound {
+		if err == nil {
+			return &m, nil
+		} else {
+			return nil, err
+		}
+	}
+	if param.Uid == 0 {
+		return nil, errors.New("无效的uid")
+	}
+
+	if param.Openid == "" {
+		return nil, errors.New("无效的openid")
+	}
+
+	member.Uniacid = param.Uniacid
+	member.Uid = param.Uid
+	member.Openid = param.Openid
+	member.Nickname = param.Nickname
+	member.Salt = strings.Random(20)
+	member.Pwd = strings.Md5(param.Openid + member.Salt)
+
+	return s.d.CreateMember(member)
 }
 
 func (s *Service) Login(param model.LoginParam) (string, error) {

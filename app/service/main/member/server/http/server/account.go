@@ -43,6 +43,22 @@ func login(c *gin.Context) {
 	return
 }
 
+func userCheckWechat(c *gin.Context) {
+	var param model.UserCheckWechatParam
+	if err := c.Bind(&param); err != nil {
+		http.Response(c, 400, "用户校验失败,"+err.Error(), nil)
+		return
+	}
+
+	member, err := svr.UserCheckWechat(param)
+	if err != nil {
+		http.Response(c, 400, "用户校验失败,"+err.Error(), nil)
+		return
+	}
+
+	http.Response(c, 200, "用户校验成功", member)
+}
+
 func memberUpdatePwd(c *gin.Context) {
 	var p model.UpdatePwdParam
 	if err := c.Bind(&p); err != nil {
