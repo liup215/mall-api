@@ -9,17 +9,15 @@ import (
 )
 
 type CurrentUser struct {
-	Id         int       `json:"id"`
-	Username   string    `json:"username"`
-	Status     int       `json:"status"`
-	Uniacid    int       `json:"uniacid,omitempty"`
-	Uid        int       `json:"uid,omitempty"`
-	Openid     string    `json:"openid,omitempty"`
-	Realname   string    `json:"realname,omitempty"`
-	Mobile     string    `json:"mobile,omitempty"`
-	Weixin     string    `json:"weixin,omitempty"`
-	Createtime time.Time `json:"createtime,omitempty"`
-	Usertype   int       `json:"usertype"`
+	Id       int    `json:"id"`
+	Username string `json:"username"`
+	Status   int    `json:"status"`
+	Uniacid  int    `json:"uniacid,omitempty"`
+	Uid      int    `json:"uid,omitempty"`
+	Openid   string `json:"openid,omitempty"`
+	Realname string `json:"realname,omitempty"`
+	Mobile   string `json:"mobile,omitempty"`
+	Usertype int    `json:"usertype"`
 }
 
 const (
@@ -30,37 +28,55 @@ const (
 func PayloadFunc(data interface{}) jwt.MapClaims {
 	if v, ok := data.(*CurrentUser); ok {
 		return jwt.MapClaims{
-			"id":         v.Id,
-			"username":   v.Username,
-			"status":     v.Status,
-			"uniacid":    v.Uniacid,
-			"uid":        v.Uid,
-			"openid":     v.Openid,
-			"realname":   v.Realname,
-			"mobile":     v.Mobile,
-			"weixin":     v.Weixin,
-			"createtime": v.Createtime,
-			"usertype":   v.Usertype,
+			"id":       v.Id,
+			"username": v.Username,
+			"status":   v.Status,
+			"uniacid":  v.Uniacid,
+			"uid":      v.Uid,
+			"openid":   v.Openid,
+			"realname": v.Realname,
+			"mobile":   v.Mobile,
+			"usertype": v.Usertype,
 		}
 	}
 	return jwt.MapClaims{}
 }
 
 func IdentityHandler(claims gojwt.MapClaims) interface{} {
-	fmt.Println(claims)
-	return &CurrentUser{
-		Id:         int(claims["id"].(float64)),
-		Username:   claims["username"].(string),
-		Status:     int(claims["status"].(float64)),
-		Uniacid:    int(claims["uniacid"].(float64)),
-		Uid:        int(claims["uid"].(float64)),
-		Openid:     claims["openid"].(string),
-		Realname:   claims["realname"].(string),
-		Mobile:     claims["mobile"].(string),
-		Weixin:     claims["wexin"].(string),
-		Createtime: claims["createtime"].(time.Time),
-		Usertype:   int(claims["usertype"].(float64)),
+
+	u := &CurrentUser{}
+
+	if id, ok := claims["id"]; ok {
+		u.Id = int(id.(float64))
 	}
+	if username, ok := claims["username"]; ok {
+		u.Username = username.(string)
+	}
+	if status, ok := claims["status"]; ok {
+		u.Status = int(status.(float64))
+	}
+	if uniacid, ok := claims["uniacid"]; ok {
+		u.uniacid = int(uniacid.(float64))
+	}
+	if uid, ok := claims["uid"]; ok {
+		u.Uid = int(uid.(float64))
+	}
+	if openid, ok := claims["openid"]; ok {
+		u.Openid = openid.(string)
+	}
+	if realname, ok := claims["realname"]; ok {
+		u.Realname = realname.(string)
+	}
+
+	if mobile, ok := claims["mobile"]; ok {
+		r.Mobile = mobile.(string)
+	}
+
+	if userType, ok := claims["usertype"]; ok {
+		r.Usertype = int(mobile.(float64))
+	}
+
+	return u
 }
 
 func GetCurrentUser(c *gin.Context) (*CurrentUser, bool) {
