@@ -1,11 +1,9 @@
 package auth
 
 import (
-	"fmt"
 	"github.com/appleboy/gin-jwt"
 	"github.com/gin-gonic/gin"
 	gojwt "gopkg.in/dgrijalva/jwt-go.v3"
-	"mall/lib/time"
 )
 
 type CurrentUser struct {
@@ -15,8 +13,10 @@ type CurrentUser struct {
 	Uniacid  int    `json:"uniacid,omitempty"`
 	Uid      int    `json:"uid,omitempty"`
 	Openid   string `json:"openid,omitempty"`
+	Nickname string `json:"nickname,omitempty"`
 	Realname string `json:"realname,omitempty"`
 	Mobile   string `json:"mobile,omitempty"`
+	Avatar   string `json:"avatar,omitempty"`
 	Usertype int    `json:"usertype"`
 }
 
@@ -34,8 +34,10 @@ func PayloadFunc(data interface{}) jwt.MapClaims {
 			"uniacid":  v.Uniacid,
 			"uid":      v.Uid,
 			"openid":   v.Openid,
+			"nickname": v.Nickname,
 			"realname": v.Realname,
 			"mobile":   v.Mobile,
+			"avatar":   v.Avatar,
 			"usertype": v.Usertype,
 		}
 	}
@@ -56,7 +58,7 @@ func IdentityHandler(claims gojwt.MapClaims) interface{} {
 		u.Status = int(status.(float64))
 	}
 	if uniacid, ok := claims["uniacid"]; ok {
-		u.uniacid = int(uniacid.(float64))
+		u.Uniacid = int(uniacid.(float64))
 	}
 	if uid, ok := claims["uid"]; ok {
 		u.Uid = int(uid.(float64))
@@ -64,16 +66,22 @@ func IdentityHandler(claims gojwt.MapClaims) interface{} {
 	if openid, ok := claims["openid"]; ok {
 		u.Openid = openid.(string)
 	}
+	if nickname, ok := claims["nickname"]; ok {
+		u.Nickname = nickname.(string)
+	}
 	if realname, ok := claims["realname"]; ok {
 		u.Realname = realname.(string)
 	}
 
 	if mobile, ok := claims["mobile"]; ok {
-		r.Mobile = mobile.(string)
+		u.Mobile = mobile.(string)
+	}
+	if avatar, ok := claims["avatar"]; ok {
+		u.Avatar = avatar.(string)
 	}
 
 	if userType, ok := claims["usertype"]; ok {
-		r.Usertype = int(mobile.(float64))
+		u.Usertype = int(userType.(float64))
 	}
 
 	return u

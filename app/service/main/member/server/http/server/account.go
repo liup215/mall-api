@@ -2,9 +2,11 @@ package server
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"mall/app/service/main/member/model"
 	"mall/lib/net/http"
+	"mall/lib/net/http/middleware/auth"
+
+	"github.com/gin-gonic/gin"
 )
 
 func register(c *gin.Context) {
@@ -41,6 +43,16 @@ func login(c *gin.Context) {
 		fmt.Sprintf("be50___ewei_shopv2_member_session_%v", param.Uniacid): cookie,
 	})
 	return
+}
+
+func currentUser(c *gin.Context) {
+	u, exist := auth.GetCurrentUser(c)
+	if !exist {
+		http.Response(c, 400, "当前用户获取失败", nil)
+		return
+	}
+
+	http.Response(c, 200, "获取成功", u)
 }
 
 func userCheckWechat(c *gin.Context) {

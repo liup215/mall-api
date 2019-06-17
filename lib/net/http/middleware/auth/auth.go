@@ -1,8 +1,9 @@
 package auth
 
 import (
-	"github.com/appleboy/gin-jwt"
 	"time"
+
+	"github.com/appleboy/gin-jwt"
 )
 
 func New(c *Config) *jwt.GinJWTMiddleware {
@@ -26,9 +27,9 @@ func New(c *Config) *jwt.GinJWTMiddleware {
 	}
 
 	authMiddleware := &jwt.GinJWTMiddleware{
-		Realm:      c.Realm,
-		Key:        []byte(c.Key),
-		MaxRefresh: time.Hour,
+		Realm:   c.Realm,
+		Key:     []byte(c.Key),
+		Timeout: 24 * 30 * time.Hour,
 		// TokenLookup is a string in the form of "<source>:<name>" that is used
 		// to extract token from the request.
 		// Optional. Default value "header:Authorization".

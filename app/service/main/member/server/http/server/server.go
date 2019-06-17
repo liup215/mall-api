@@ -2,11 +2,12 @@ package server
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"mall/app/service/main/member/conf"
 	"mall/app/service/main/member/service"
 	"mall/lib/net/http/middleware/auth"
 	"mall/lib/net/http/middleware/cors"
+
+	"github.com/gin-gonic/gin"
 )
 
 var svr *service.Service
@@ -56,5 +57,8 @@ func router(r *gin.Engine, c *conf.Config) {
 
 		v2.POST("/login", authMiddleware.LoginHandler)
 		v2.Use(authMiddleware.MiddlewareFunc())
+		{
+			v2.GET("/current_user", currentUser)
+		}
 	}
 }

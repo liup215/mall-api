@@ -3,9 +3,11 @@ package time
 import (
 	"database/sql/driver"
 	"errors"
-	"gopkg.in/mgo.v2/bson"
+	"fmt"
 	"strconv"
 	xtime "time"
+
+	"gopkg.in/mgo.v2/bson"
 )
 
 const (
@@ -38,8 +40,8 @@ func (jt *Time) Value() (driver.Value, error) {
 	return xtime.Unix(int64(*jt), 0), nil
 }
 
-func (jt *Time) GetBSON() (interface{}, error) {
-	if jt == nil {
+func (jt Time) GetBSON() (interface{}, error) {
+	if jt == 0 {
 		return nil, nil
 	}
 	return jt.Time(), nil
@@ -51,6 +53,8 @@ func (t *Time) SetBSON(raw bson.Raw) error {
 	if err != nil {
 		return err
 	}
+
+	fmt.Println(decode)
 
 	*t = Time(decode.Unix())
 	return nil

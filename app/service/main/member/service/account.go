@@ -6,11 +6,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/jinzhu/gorm"
 	"mall/app/service/main/member/api"
 	"mall/app/service/main/member/model"
 	"mall/lib/strings"
 	"mall/lib/utils"
+
+	"github.com/jinzhu/gorm"
 )
 
 func (s *Service) MemberCreate(c context.Context, r *api.MemberCreateRequest) (*api.MemberCreateReply, error) {
@@ -95,6 +96,13 @@ func (s *Service) Register(param model.RegisterParam) error {
 
 func (s *Service) UserCheckWechat(param model.UserCheckWechatParam) (*model.EweiShopMember, error) {
 	member := model.EweiShopMember{}
+	if param.Uniacid == 0 {
+		return nil, errors.New("无效的应用ID")
+	}
+	if param.Openid == "" {
+		return nil, errors.New("无效的用户OpenID")
+	}
+	fmt.Println(param.Uniacid, param.Openid)
 	if m, err := s.d.QueryMember(model.MemberQuery{Uniacid: param.Uniacid, Openid: param.Openid}); err != gorm.ErrRecordNotFound {
 		if err == nil {
 			return &m, nil
@@ -116,6 +124,7 @@ func (s *Service) UserCheckWechat(param model.UserCheckWechatParam) (*model.Ewei
 	member.Nickname = param.Nickname
 	member.Salt = strings.Random(20)
 	member.Pwd = strings.Md5(param.Openid + member.Salt)
+	member.Avatar = param.Avatar
 
 	return s.d.CreateMember(member)
 }
