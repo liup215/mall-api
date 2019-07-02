@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"fmt"
+
 	"gopkg.in/mgo.v2"
 )
 
@@ -15,6 +16,7 @@ type Config struct {
 
 func New(c *Config) *Mongo {
 	url := fmt.Sprintf("mongodb://%v:%v@%v:%v/%v", c.Username, c.Password, c.Host, c.Port, c.Db)
+	fmt.Println("mongo:", url)
 	session, err := mgo.Dial(url)
 	if err != nil {
 		panic(err)

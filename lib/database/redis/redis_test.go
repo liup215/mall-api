@@ -12,16 +12,5 @@ func TestRedis(t *testing.T) {
 	}
 
 	redis := New(c)
-	err := redis.SET("a", "b", 0)
-	if err != nil {
-		t.Error(err.Error())
-	}
-	v, err := redis.GET("a")
-	if err != nil {
-		t.Error(err.Error())
-	}
 
-	if v != "b" {
-		t.Errorf("error, expect %s, got %s", "b", v)
-	}
 }

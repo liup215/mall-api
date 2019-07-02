@@ -2,6 +2,7 @@ package orm
 
 import (
 	"fmt"
+
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
 )
@@ -22,6 +23,7 @@ type Config struct {
 
 func New(conf *Config) *gorm.DB {
 	url := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=%s&parseTime=True&loc=Local", conf.Username, conf.Password, conf.Host, conf.Port, conf.Database, conf.Charset)
+	fmt.Println(url)
 	db, err := gorm.Open(conf.Dialect, url)
 	if err != nil {
 		panic(err)

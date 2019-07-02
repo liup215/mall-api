@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package api;
+
+service MemberService {
+  rpc MemberCreate(MemberCreateRequest) returns (MemberCreateReply) {};
+  rpc MemberInfoByMobile(MemberInfoByMobileRequest) returns (MemberInfoReply){};
+}
+
+message MemberCreateRequest {
+  sint64 uniacid = 1;
+  string mobile = 2;
+  string pwd = 3;
+}
+
+message MemberCreateReply {
+  sint64 uniacid = 1;
+  sint64 id = 2;
+  string openid = 3;
+}
+
+message MemberInfoByMobileRequest {
+  sint64 uniacid = 1;
+  string mobile = 2;
+  string pwd = 3;
+}
+
+message MemberInfoReply {
+  sint64 id = 1;
+  sint64 uniacid = 2;
+  sint64 uid = 3;
+  string openid = 4;
+  string realname = 5;
+  string mobile = 6;
+  string weixin = 7;
+  sint64 createtime = 8;
+  sint64 status = 9;
+  string nickname = 10;
+  sint64 gender = 11;
+  string avatar = 12;
+  string province = 13;
+  string city = 14;
+  string area = 15;
+  string salt = 16;
+}
+
