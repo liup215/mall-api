@@ -5,3 +5,5 @@ upload.sh
 upload-dev.sh
 update.sh
 app/service/main/*/cmd/cmd
+app/job/main/*/cmd/cmd
+app/api/*/*/cmd/cmd
