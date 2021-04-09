@@ -1,17 +1,17 @@
 package strings
 
 import (
+	"fmt"
 	"testing"
 )
 
 func TestPhpmd5(t *testing.T) {
-	pwd := "920222"
-	salt := "tbqMzBhQNQsPy2Xu16tA"
+	pwd := "123456"
+	salt := "i0Qi16ZrzF"
 
-	// dis := "ded752c17241230480d00860c9094231"
-	dis := "77452275adc8c57c7d8fb893aa2a67d5"
-	md5 := Md5(pwd + salt)
+	// dis := "46f00be953306350a5b31580f11dfc22ee58d166"
+	sha1 := Sha1(fmt.Sprintf("%s-%s-%s", pwd, salt, "35eb5e04"))
 
-	t.Error(md5, dis, md5 == dis)
+	t.Error(sha1)
 
 }

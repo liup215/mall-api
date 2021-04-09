@@ -28,6 +28,10 @@ func (jt *Time) Scan(src interface{}) (err error) {
 		*jt = Time(i)
 	case int64:
 		*jt = Time(sc)
+	case []byte:
+		var i int64
+		i, err = strconv.ParseInt(string(sc), 10, 64)
+		*jt = Time(i)
 	}
 	return
 }

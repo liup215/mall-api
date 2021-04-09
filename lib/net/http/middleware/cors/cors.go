@@ -10,7 +10,7 @@ func Cors() gin.HandlerFunc {
 	return cors.Middleware(cors.Config{
 		Origins:         "*",
 		Methods:         "GET, PUT, POST, DELETE, OPTIONS",
-		RequestHeaders:  "Origin, Authorization, Content-Type, token",
+		RequestHeaders:  "Origin, Authorization, Content-Type, token, x_requested_with",
 		ExposedHeaders:  "",
 		MaxAge:          50 * time.Second,
 		Credentials:     true,

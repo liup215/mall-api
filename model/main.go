@@ -24,19 +24,19 @@ func main() {
 		// 指定某个表,如果不指定,则默认全部表都迁移
 		//Table("user").
 		// 表前缀
-		Prefix("ims_").
+		Prefix("t_").
 		// 是否添加json tag
 		EnableJsonTag(true).
 		// 生成struct的包名(默认为空的话, 则取名为: package model)
 		PackageName("model").
 		// tag字段的key值,默认是orm
-		TagKey("orm").
+		TagKey("gorm").
 		// 是否添加结构体方法获取表名
 		RealNameMethod("TableName").
 		// 生成的结构体保存路径
-		SavePath("./model.go").
+		SavePath("./exam.go").
 		// 数据库dsn,这里可以使用 t2t.DB() 代替,参数为 *sql.DB 对象
-		Dsn("root:123456@tcp(localhost:3306)/emao_shop?charset=utf8").
+		Dsn("root:123456@tcp(localhost:3306)/uexam?charset=utf8").
 		// 执行
 		Run()
 
